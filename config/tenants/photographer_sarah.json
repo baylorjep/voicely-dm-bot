@@ -1,0 +1,11 @@
+{
+  "creator_name": "Creator Name",
+  "booking_url": "https://calendly.com/creator/30min",
+  "pricing_config": "./config/pricing.sample.yml",
+  "voice_config": "./config/voice.sample.json",
+  "persona_config": "./config/persona.sample.json",
+  "meta_config": {
+    "page_id": "YOUR_PAGE_ID",
+    "page_access_token": "YOUR_PAGE_ACCESS_TOKEN"
+  }
+}

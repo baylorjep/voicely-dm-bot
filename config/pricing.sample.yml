@@ -1,0 +1,20 @@
+currency: USD
+packages:
+  mini: { label: "Mini Session (30 min)", price: 150, includes: ["20 edited photos"] }
+  standard: { label: "Standard (60 min)", price: 300, includes: ["60–80 shots", "Location consult"] }
+  wedding_base: { label: "Wedding Base (4 hrs)", price: 1200, includes: ["Lead shooter", "Online gallery"] }
+
+addons:
+  second_shooter: { label: "Second shooter", price: 300 }
+  extra_hour: { label: "Extra hour", price: 250 }
+  rush_edit: { label: "48-hr rush edits", price: 200 }
+
+rules:
+  travel_fee:
+    trigger: { distance_miles_gt: 25 }
+    # simple expression: fee = 2 * (miles - 25)
+    formula: "2 * (miles - 25)"
+display:
+  bullets:
+    total_prefix: "Total"
+    cta: "If that looks good, want the link to book?"

@@ -1,0 +1,11 @@
+{
+  "tone": "warm, upbeat, concise, never salesy",
+  "emoji_policy": "sparingly, 0-1 per message; favorites: ✨🙌",
+  "greetings": ["Hey hey!", "Hi there!"],
+  "signoffs": ["– B", "– Baylor"],
+  "no_go_phrases": ["limited time offer", "last chance"],
+  "style_examples": [
+    "So pumped you reached out!",
+    "Love this idea — happy to help."
+  ]
+}

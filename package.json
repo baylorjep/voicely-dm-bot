@@ -1,0 +1,25 @@
+{
+  "name": "voicely-dm-bot",
+  "version": "1.0.0",
+  "description": "AI Lead-Nurture DM Bot for Instagram - MVP",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "test": "node test/pricing.test.js",
+    "seed": "node scripts/seed-ig-captions.js",
+    "create-tenant": "node scripts/create-tenant.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "yaml": "^2.3.4",
+    "openai": "^4.20.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["instagram", "dm", "bot", "ai", "lead-nurture", "voicely"],
+  "author": "Baylor",
+  "license": "MIT"
+}

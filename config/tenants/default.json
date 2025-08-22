@@ -1,0 +1,11 @@
+{
+  "creator_name": "Baylor",
+  "booking_url": "https://calendly.com/baylor/30min",
+  "pricing_config": "./config/pricing.sample.yml",
+  "voice_config": "./config/voice.sample.json",
+  "persona_config": "./config/persona.sample.json",
+  "meta_config": {
+    "page_id": "123456789012345",
+    "page_access_token": "EAAG..."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "qualification": {
+    "always_ask": ["date", "location", "hours needed", "approx headcount/budget if wedding"],
+    "optional": ["indoor/outdoor", "vibe/mood"]
+  },
+  "booking": {
+    "cta": "You can grab a time here 👉 {BOOKING_URL}",
+    "softener": "No rush — happy to answer Qs!"
+  },
+  "boundaries": {
+    "when_to_quote": "Only quote if the user asked for price or you have date + hours or equivalent scope.",
+    "handoff_if": ["out of scope", "custom multi-day", "last-minute rush with travel"]
+  }
+}
