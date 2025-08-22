@@ -4,13 +4,14 @@ const {
   createCreatorProfile, 
   validateProfileData, 
   generateTenantId,
-  testWebhookConnection 
+  getInstagramAuthUrl,
+  handleInstagramCallback
 } = require('../lib/onboarding');
 
 const router = express.Router();
 
 /**
- * GET /onboarding - Show onboarding form
+ * GET /onboarding - Show simplified onboarding form
  */
 router.get('/', (req, res) => {
   const creatorName = req.query.name || '';
@@ -33,16 +34,20 @@ router.get('/', (req, res) => {
         .form-group { margin: 20px 0; }
         label { display: block; margin-bottom: 5px; font-weight: 600; }
         input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
-        button { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin: 5px; }
         button:hover { background: #0056b3; }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #545b62; }
         .success { background: #d4edda; color: #155724; padding: 15px; border-radius: 4px; margin: 20px 0; }
         .error { background: #f8d7da; color: #721c24; padding: 15px; border-radius: 4px; margin: 20px 0; }
         .code { background: #f1f3f4; padding: 10px; border-radius: 4px; font-family: monospace; margin: 10px 0; }
+        .instagram-connect { background: #e4405f; }
+        .instagram-connect:hover { background: #c13584; }
       </style>
     </head>
     <body>
       <h1>🚀 Voicely Bot Setup</h1>
-      <p>Get your Instagram DM bot up and running in 15 minutes!</p>
+      <p>Get your Instagram DM bot up and running in 5 minutes!</p>
       
       ${creatorName ? `
         <div class="success">
@@ -50,7 +55,7 @@ router.get('/', (req, res) => {
           <p>Your unique ID: <strong>${tenantId}</strong></p>
         </div>
         
-        <h2>📋 Setup Instructions</h2>
+        <h2>📋 Simple Setup (2 Steps)</h2>
         ${Object.values(instructions).map(step => `
           <div class="step">
             <h3>${step.title} (${step.estimatedTime})</h3>
@@ -77,25 +82,22 @@ router.get('/', (req, res) => {
           <div class="form-group">
             <label>Instagram User ID:</label>
             <input type="text" name="instagramUserId" placeholder="17841405793087218" required>
-          </div>
-          
-          <div class="form-group">
-            <label>Meta Page ID:</label>
-            <input type="text" name="pageId" placeholder="123456789012345" required>
-          </div>
-          
-          <div class="form-group">
-            <label>Meta Page Access Token:</label>
-            <input type="text" name="pageAccessToken" placeholder="EAAG..." required>
-          </div>
-          
-          <div class="form-group">
-            <label>Webhook Verify Token:</label>
-            <input type="text" name="verifyToken" value="voicely_${tenantId}" required>
+            <small>Don't know your Instagram User ID? <a href="#" onclick="showInstagramHelp()">Click here to find it</a></small>
           </div>
           
           <button type="submit">Create My Bot Profile</button>
         </form>
+        
+        <div id="instagramHelp" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 4px; margin: 20px 0;">
+          <h4>How to find your Instagram User ID:</h4>
+          <ol>
+            <li>Go to <a href="https://www.instagram.com/yourusername" target="_blank">your Instagram profile</a></li>
+            <li>Right-click and "View Page Source"</li>
+            <li>Search for "profilePage_</li>
+            <li>Look for a number like "17841405793087218" - that's your User ID</li>
+            <li>Or use a tool like <a href="https://codeofaninja.com/tools/find-instagram-user-id/" target="_blank">this one</a></li>
+          </ol>
+        </div>
       ` : `
         <form method="GET">
           <div class="form-group">
@@ -107,6 +109,10 @@ router.get('/', (req, res) => {
       `}
       
       <script>
+        function showInstagramHelp() {
+          document.getElementById('instagramHelp').style.display = 'block';
+        }
+        
         document.getElementById('profileForm')?.addEventListener('submit', async (e) => {
           e.preventDefault();
           const formData = new FormData(e.target);
@@ -125,10 +131,15 @@ router.get('/', (req, res) => {
               document.body.innerHTML = \`
                 <div class="success">
                   <h2>🎉 Setup Complete!</h2>
-                  <p>Your InstaClose bot is ready to go!</p>
-                  <p><strong>Webhook URL:</strong> <span class="code">https://your-domain.com/webhook/${tenantId}</span></p>
-                  <p><strong>Verify Token:</strong> <span class="code">voicely_${tenantId}</span></p>
-                  <p>Use these values in your Meta app webhook configuration.</p>
+                  <p>Your Voicely bot is ready to go!</p>
+                  <p><strong>Your bot URL:</strong> <span class="code">https://voicely-bay.vercel.app/webhook/${tenantId}</span></p>
+                  <p><strong>Next steps:</strong></p>
+                  <ol>
+                    <li>Your bot will automatically respond to Instagram DMs</li>
+                    <li>Test it by sending a DM to your Instagram account</li>
+                    <li>Customize your pricing and voice in the admin panel</li>
+                  </ol>
+                  <p><a href="/admin">Go to Admin Dashboard</a></p>
                 </div>
               \`;
             } else {
@@ -177,13 +188,33 @@ router.post('/', (req, res) => {
       success: true, 
       message: 'Profile created successfully!',
       tenantId: profileData.tenantId,
-      webhookUrl: `https://your-domain.com/webhook/${profileData.tenantId}`
+      webhookUrl: `https://voicely-bay.vercel.app/webhook/${profileData.tenantId}`
     });
   } else {
     res.json({ 
       success: false, 
       error: result.error 
     });
+  }
+});
+
+/**
+ * GET /onboarding/callback - Handle Instagram OAuth callback
+ */
+router.get('/callback', (req, res) => {
+  const { code, tenant, creator } = req.query;
+  
+  if (!code || !tenant || !creator) {
+    return res.redirect('/onboarding?error=missing_params');
+  }
+  
+  // Handle the OAuth callback
+  const result = handleInstagramCallback(code, tenant, creator);
+  
+  if (result.success) {
+    res.redirect(`/onboarding?name=${encodeURIComponent(creator)}&connected=true`);
+  } else {
+    res.redirect(`/onboarding?name=${encodeURIComponent(creator)}&error=connection_failed`);
   }
 });
 

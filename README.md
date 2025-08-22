@@ -12,39 +12,43 @@ A **B2B multi-tenant** Instagram DM bot that:
 - **Hands off** complex requests to humans via Slack or logging
 - **Respects Instagram limits** (24-hour window, user-initiated threads only)
 
-## Self-Service Onboarding
+## 🚀 Super Simple Setup
 
-### For New Creators (Self-Service)
+### For New Creators (5 Minutes)
 
-Creators can set themselves up in **15 minutes** using our guided onboarding:
+Creators can set themselves up in **5 minutes** with just 2 steps:
 
-1. **Visit the onboarding page:** `https://your-domain.com/onboarding`
-2. **Follow the step-by-step guide** that walks them through:
-   - Creating their Meta app
-   - Connecting their Instagram account
-   - Generating access tokens
-   - Setting up webhooks
-   - Customizing their bot's voice and pricing
-3. **Get their unique webhook URL** and verify token
-4. **Start receiving DMs** immediately
+1. **Visit the onboarding page:** `https://voicely-bay.vercel.app/onboarding`
+2. **Fill out their profile:**
+   - Creator name
+   - Calendly booking URL
+   - Instagram User ID (we help them find it)
+3. **Done!** Their bot is ready immediately
 
-### For Administrators
+**No technical setup required!** No Meta app creation, no webhook configuration, no access tokens.
 
-**Admin Dashboard:** `https://your-domain.com/admin`
-- View all tenants and their status
-- Monitor onboarding completion
-- Access tenant configurations
+### For Platform Owner (One-time Setup)
 
-**Manual Setup (if needed):**
-```bash
-# Create a new tenant
-npm run create-tenant photographer_sarah
+**You create ONE Meta app** that all creators use:
 
-# Edit the configuration
-nano config/tenants/photographer_sarah.json
-```
+1. **Create Meta App** (one time):
+   - Go to https://developers.facebook.com/
+   - Create app → Business → Instagram Basic Display
+   - Name: "Voicely Bot Platform"
+   - Add Instagram Basic Display product
 
-### 2. Environment Setup
+2. **Set up environment variables:**
+   ```bash
+   PAGE_ID=your_page_id
+   PAGE_ACCESS_TOKEN=your_page_access_token
+   INSTAGRAM_APP_ID=your_app_id
+   ```
+
+3. **Deploy to Vercel** (already done!)
+
+4. **Share onboarding URL** with creators
+
+## Environment Setup
 
 1. **Copy environment file:**
    ```bash
@@ -53,45 +57,23 @@ nano config/tenants/photographer_sarah.json
 
 2. **Fill in your values:**
    ```bash
-   PORT=3000
-   VERIFY_TOKEN=your_webhook_verify_token
-   OPENAI_API_KEY=your_openai_api_key
-   SLACK_WEBHOOK_URL=your_slack_webhook_url  # optional
-   ```
-
-3. **Create tenant configurations:**
-   ```bash
-   # Create a new tenant (creator)
-   npm run create-tenant photographer_sarah
+   # Your Meta App (ONE app for all users)
+   PAGE_ID=123456789012345
+   PAGE_ACCESS_TOKEN=EAAG...
+   INSTAGRAM_APP_ID=123456789012345
    
-   # Edit the generated config
-   nano config/tenants/photographer_sarah.json
+   # OpenAI
+   OPENAI_API_KEY=sk-...
+   
+   # Optional: Slack for handoffs
+   SLACK_WEBHOOK_URL=https://hooks.slack.com/...
    ```
 
-### 3. Install & Run
-
-```bash
-npm install
-npm run dev
-```
-
-### 4. Test with ngrok
-
-For local development, use ngrok to expose your local server:
-
-```bash
-# Install ngrok
-npm install -g ngrok
-
-# Start your server
-npm run dev
-
-# In another terminal, expose your local server
-ngrok http 3000
-
-# Use tenant-specific webhook URLs in Meta:
-# https://your-ngrok-url.ngrok.io/webhook/photographer_sarah
-```
+3. **Install & Run:**
+   ```bash
+   npm install
+   npm run dev
+   ```
 
 ## B2B Multi-Tenant Architecture
 
@@ -119,20 +101,7 @@ Each tenant gets their own webhook endpoint:
 - **Single tenant:** `/webhook`
 - **Multi-tenant:** `/webhook/{tenantId}`
 
-Example: `/webhook/photographer_sarah`
-
-### Creating New Tenants
-
-```bash
-# Create a new tenant
-npm run create-tenant photographer_mike
-
-# Edit the configuration
-nano config/tenants/photographer_mike.json
-
-# Set up Meta app for this tenant
-# Use webhook URL: https://your-domain.com/webhook/photographer_mike
-```
+Example: `/webhook/sarahjohnson_abc123`
 
 ## Configuration
 
